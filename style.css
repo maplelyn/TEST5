@@ -1185,6 +1185,8 @@ footer {
   font-weight: 500;
   user-select: none;
   position: relative;
+  opacity: 0;
+  transform: translateY(20px);
   animation: popupFadeIn 0.4s ease forwards;
 }
 
@@ -1235,11 +1237,26 @@ footer {
   cursor: pointer;
 }
 
+#adblock-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.3s ease;
+}
+
+#adblock-close-btn:hover,
+#adblock-close-btn:focus {
+  color: #ffd700;
+  outline: none;
+}
+
 @keyframes popupFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
   to {
     opacity: 1;
     transform: translateY(0);
