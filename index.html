@@ -10799,7 +10799,7 @@
   }
 
   function checkLinkvertiseLinks() {
-    // Check if any anchor (<a>) elements have href containing "linkvertise.com"
+    // Returns true if at least one linkvertise.com link is present
     const links = document.querySelectorAll('a[href*="linkvertise.com"]');
     return links.length > 0;
   }
@@ -10821,16 +10821,15 @@
   });
 
   window.addEventListener('load', () => {
-    // Check after 10 seconds if Linkvertise links are present
     setTimeout(() => {
       if (!checkLinkvertiseLinks()) {
-        // No Linkvertise links found => likely adblocker active
+        // No linkvertise.com links found => adblock likely active
         showPopup();
       } else {
-        // Linkvertise links present => no adblock detected, do nothing
+        // At least one linkvertise.com link found => no adblock detected
         hidePopup();
       }
-    }, 10000); // 10 seconds delay
+    }, 10000); // 10 seconds delay before checking
   });
 })();
 </script>
