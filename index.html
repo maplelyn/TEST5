@@ -10787,23 +10787,38 @@
   const refreshBtn = document.getElementById('adblock-refresh-btn');
   const closeBtn = document.getElementById('adblock-close-btn');
 
+  function createBait(className) {
+    const bait = document.createElement('div');
+    bait.className = className;
+    bait.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;';
+    document.body.appendChild(bait);
+    return bait;
+  }
+
   function detectAdBlocker() {
     return new Promise((resolve) => {
-      const bait = document.createElement('div');
-      bait.className = 'ad-bait ad ad-banner ads adsbox ad-unit text-ad sponsored';
-      bait.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;';
-      document.body.appendChild(bait);
+      const baits = [
+        createBait('ad-bait ad ad-banner ads adsbox ad-unit text-ad sponsored'),
+        createBait('adsbox'),
+        createBait('adsbygoogle'),
+      ];
 
       setTimeout(() => {
-        const style = window.getComputedStyle(bait);
-        const blocked = !document.body.contains(bait) ||
-          style.display === 'none' ||
-          style.visibility === 'hidden' ||
-          bait.offsetHeight === 0 ||
-          bait.offsetWidth === 0;
-        bait.remove();
+        let blocked = false;
+        for (const bait of baits) {
+          const style = window.getComputedStyle(bait);
+          if (!document.body.contains(bait) ||
+              style.display === 'none' ||
+              style.visibility === 'hidden' ||
+              bait.offsetHeight === 0 ||
+              bait.offsetWidth === 0) {
+            blocked = true;
+            break;
+          }
+        }
+        baits.forEach(b => b.remove());
         resolve(blocked);
-      }, 2000);
+      }, 2500);
     });
   }
 
@@ -10843,7 +10858,7 @@
           hidePopup();
         }
       });
-    }, 10000); // 10 seconds delay before detection
+    }, 15000); // 15 seconds delay before detection
   });
 })();
 </script>
