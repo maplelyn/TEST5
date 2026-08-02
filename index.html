@@ -10787,41 +10787,6 @@
   const refreshBtn = document.getElementById('adblock-refresh-btn');
   const closeBtn = document.getElementById('adblock-close-btn');
 
-  function createBait(className) {
-    const bait = document.createElement('div');
-    bait.className = className;
-    bait.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;';
-    document.body.appendChild(bait);
-    return bait;
-  }
-
-  function detectAdBlocker() {
-    return new Promise((resolve) => {
-      const baits = [
-        createBait('ad-bait ad ad-banner ads adsbox ad-unit text-ad sponsored'),
-        createBait('adsbox'),
-        createBait('adsbygoogle'),
-      ];
-
-      setTimeout(() => {
-        let blocked = false;
-        for (const bait of baits) {
-          const style = window.getComputedStyle(bait);
-          if (!document.body.contains(bait) ||
-              style.display === 'none' ||
-              style.visibility === 'hidden' ||
-              bait.offsetHeight === 0 ||
-              bait.offsetWidth === 0) {
-            blocked = true;
-            break;
-          }
-        }
-        baits.forEach(b => b.remove());
-        resolve(blocked);
-      }, 2500);
-    });
-  }
-
   function showPopup() {
     overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -10831,6 +10796,12 @@
   function hidePopup() {
     overlay.style.display = 'none';
     document.body.style.overflow = '';
+  }
+
+  function checkLinkvertiseLinks() {
+    // Check if any anchor (<a>) elements have href containing "linkvertise.com"
+    const links = document.querySelectorAll('a[href*="linkvertise.com"]');
+    return links.length > 0;
   }
 
   refreshBtn.addEventListener('click', () => {
@@ -10850,14 +10821,16 @@
   });
 
   window.addEventListener('load', () => {
+    // Check after 10 seconds if Linkvertise links are present
     setTimeout(() => {
-      detectAdBlocker().then((blocked) => {
-        if (blocked) {
-          showPopup();
-        }
-        // Do NOT hide popup if not blocked
-      });
-    }, 12000); // 12 seconds delay before detection
+      if (!checkLinkvertiseLinks()) {
+        // No Linkvertise links found => likely adblocker active
+        showPopup();
+      } else {
+        // Linkvertise links present => no adblock detected, do nothing
+        hidePopup();
+      }
+    }, 10000); // 10 seconds delay
   });
 })();
 </script>
