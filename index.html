@@ -10774,23 +10774,29 @@ body.adblock-active {
 (function() {
   const overlay = document.getElementById('adblock-overlay');
   const refreshBtn = document.getElementById('adblock-refresh-btn');
+  let lastState = null;
 
-  function checkAdblock() {
+  function checkDetection() {
     try {
-      const links = document.querySelectorAll('a[href*="link-to-net"]');
-      const scripts = document.querySelectorAll('script[src*="linkvertise"]');
-      console.log('Adblock detection check:', {linksCount: links.length, scriptsCount: scripts.length});
-      if (links.length === 0 && scripts.length === 0) {
-        overlay.style.display = 'flex';
-        document.body.classList.add('adblock-active');
-      } else {
-        overlay.style.display = 'none';
-        document.body.classList.remove('adblock-active');
+      const links = Array.from(document.querySelectorAll('a[href]')).filter(a => a.href.toLowerCase().includes('link-to-net'));
+      const scripts = Array.from(document.querySelectorAll('script[src]')).filter(s => s.src.toLowerCase().includes('linkvertise'));
+      const detected = (links.length === 0 && scripts.length === 0);
+      if (detected !== lastState) {
+        lastState = detected;
+        if (detected) {
+          overlay.style.display = 'flex';
+          document.body.classList.add('adblock-active');
+        } else {
+          overlay.style.display = 'none';
+          document.body.classList.remove('adblock-active');
+        }
       }
+      console.log('Adblock detection check:', {linksCount: links.length, scriptsCount: scripts.length, detected});
     } catch (e) {
       console.error('Adblock detection error:', e);
       overlay.style.display = 'none';
       document.body.classList.remove('adblock-active');
+      lastState = false;
     }
   }
 
@@ -10799,7 +10805,8 @@ body.adblock-active {
   });
 
   window.addEventListener('load', () => {
-    setTimeout(checkAdblock, 10000);
+    checkDetection();
+    setInterval(checkDetection, 2000);
   });
 })();
 </script>
