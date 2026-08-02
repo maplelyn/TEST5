@@ -10854,11 +10854,10 @@
       detectAdBlocker().then((blocked) => {
         if (blocked) {
           showPopup();
-        } else {
-          hidePopup();
         }
+        // Do NOT hide popup if not blocked
       });
-    }, 15000); // 15 seconds delay before detection
+    }, 12000); // 12 seconds delay before detection
   });
 })();
 </script>
