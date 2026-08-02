@@ -10835,13 +10835,15 @@
   });
 
   window.addEventListener('load', () => {
-    detectAdBlocker().then((blocked) => {
-      if (blocked) {
-        showPopup();
-      } else {
-        hidePopup();
-      }
-    });
+    setTimeout(() => {
+      detectAdBlocker().then((blocked) => {
+        if (blocked) {
+          showPopup();
+        } else {
+          hidePopup();
+        }
+      });
+    }, 10000); // 10 seconds delay before detection
   });
 })();
 </script>
