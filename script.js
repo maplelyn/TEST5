@@ -1511,88 +1511,52 @@
     }
 })();
 
-// ===== Adblock Detection Script =====
 (function () {
-  function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  }
+  const overlay = document.getElementById('adblock-overlay');
+  const refreshBtn = document.getElementById('adblock-refresh-btn');
 
   function detectAdBlocker() {
-    return new Promise(function (resolve) {
-      try {
-        var bait = document.createElement('div');
-        bait.className = 'ad-bait ad ad-banner ads adsbox ad-unit text-ad sponsored';
-        bait.setAttribute('aria-hidden', 'true');
-        document.body.appendChild(bait);
+    return new Promise((resolve) => {
+      const bait = document.createElement('div');
+      bait.className = 'ad-bait ad ad-banner ads adsbox ad-unit text-ad sponsored';
+      bait.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;';
+      document.body.appendChild(bait);
 
-        setTimeout(function () {
-          var blocked = false;
-
-          if (!document.body.contains(bait)) {
-            blocked = true;
-          } else {
-            var style = window.getComputedStyle(bait);
-            if (
-              style.display === 'none' ||
-              style.visibility === 'hidden' ||
-              bait.offsetParent === null ||
-              bait.offsetHeight === 0 ||
-              bait.offsetWidth === 0
-            ) {
-              blocked = true;
-            }
-          }
-
-          try { bait.remove(); } catch (e) {}
-          resolve(blocked);
-        }, 120);
-      } catch (e) {
-        resolve(false);
-      }
+      setTimeout(() => {
+        const blocked = !document.body.contains(bait) ||
+          getComputedStyle(bait).display === 'none' ||
+          getComputedStyle(bait).visibility === 'hidden' ||
+          bait.offsetHeight === 0 ||
+          bait.offsetWidth === 0;
+        bait.remove();
+        resolve(blocked);
+      }, 100);
     });
   }
 
-  function showAdblockPopup() {
-    var overlay = document.getElementById('adblock-overlay');
-    if (!overlay) return;
-
+  function showPopup() {
     overlay.style.display = 'flex';
-    document.body.classList.add('adblock-active');
-    document.documentElement.style.overflow = 'hidden';
-
-    var refreshBtn = document.getElementById('adblock-refresh-btn');
-    if (refreshBtn) {
-      setTimeout(function () {
-        refreshBtn.focus();
-      }, 50);
-    }
+    document.body.style.overflow = 'hidden';
   }
 
-  function setupAdblockPopup() {
-    var refreshBtn = document.getElementById('adblock-refresh-btn');
-
-    if (refreshBtn) {
-      refreshBtn.addEventListener('click', function () {
-        window.location.reload();
-      });
-    }
+  function hidePopup() {
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
   }
 
-  window.addEventListener('load', function () {
-    setupAdblockPopup();
+  refreshBtn.addEventListener('click', () => {
+    window.location.reload(true);
+  });
 
-    setTimeout(function () {
-      detectAdBlocker().then(function (isBlocked) {
-        if (isBlocked) {
-          if (isMobileDevice()) {
-            var title = document.getElementById('adblock-title');
-            if (title) {
-              title.textContent = 'Please disable your ad blocker on mobile';
-            }
-          }
-          showAdblockPopup();
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      detectAdBlocker().then((blocked) => {
+        if (blocked) {
+          showPopup();
+        } else {
+          hidePopup();
         }
       });
-    }, 5000);
+    }, 1500);
   });
 })();
