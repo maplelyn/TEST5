@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Adblock Detection</title>
+<style>
+  body, html {
+    margin: 0; padding: 0; overflow: hidden; background: transparent;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  #popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,10,60,0.85);
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    user-select: none;
+  }
+  #modal {
+    background: linear-gradient(135deg,#6a0dad,#9b5cff);
+    border-radius: 16px;
+    padding: 30px 40px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 8px 30px rgba(155,92,255,0.6);
+    text-align: left;
+    font-weight: 500;
+    position: relative;
+    animation: popupFadeIn 0.4s ease forwards;
+  }
+  #modal h2 {
+    margin-top: 0;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-shadow: 0 0 8px rgba(155,92,255,0.8);
+  }
+  #modal p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  #modal p strong {
+    color: #ffd700;
+  }
+  #refresh-btn {
+    background: #9b5cff;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 9999px;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(155,92,255,0.7);
+    transition: background-color 0.3s ease, transform 0.15s ease;
+    user-select: none;
+  }
+  #refresh-btn:hover {
+    background-color: #7a3ed6;
+    transform: translateY(-2px);
+  }
+  #refresh-btn:active {
+    transform: translateY(0);
+  }
+  #close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
+  }
+  #close-btn:hover,
+  #close-btn:focus {
+    color: #ffd700;
+    outline: none;
+  }
+  @keyframes popupFadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+</head>
+<body>
+<div id="popup" style="display:none;">
+  <div id="modal" role="dialog" aria-modal="true" aria-labelledby="adblock-title" tabindex="-1">
+    <button id="close-btn" aria-label="Close adblock popup">&times;</button>
+    <h2 id="adblock-title">Please disable your ad blocker</h2>
+    <p>
+      To use this website properly, please allow ads for this site in your browser or ad blocker extension.
+      After turning it off for this website, press the button below to refresh and continue.
+    </p>
+    <p>
+      <strong>Chrome / Edge / Brave:</strong> Click the extension icon, open your ad blocker, and disable it for this site.<br />
+      <strong>Firefox:</strong> Click the ad blocker extension icon and allow this website, then reload.<br />
+      <strong>Opera:</strong> Click the shield icon near the address bar and turn off blocking for this site.
+    </p>
+    <button id="refresh-btn" type="button" aria-label="Refresh page after disabling ad blocker">I turned it off — Refresh site</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const popup = document.getElementById('popup');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const closeBtn = document.getElementById('close-btn');
+
+    function checkLinkvertiseLinks() {
+      try {
+        const links = window.parent.document.querySelectorAll('a[href*="linkvertise.com"]');
+        return links.length > 0;
+      } catch(e) {
+        return false;
+      }
+    }
+
+    function showPopup() {
+      popup.style.display = 'flex';
+      window.parent.postMessage({ adblockDetected: true }, '*');
+    }
+
+    function hidePopup() {
+      popup.style.display = 'none';
+      window.parent.postMessage({ adblockDetected: false }, '*');
+    }
+
+    refreshBtn.addEventListener('click', () => {
+      window.parent.location.reload(true);
+    });
+
+    closeBtn.addEventListener('click', () => {
+      hidePopup();
+    });
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (!checkLinkvertiseLinks()) {
+          showPopup();
+        } else {
+          hidePopup();
+        }
+      }, 10000);
+    });
+  })();
+</script>
+</body>
+</html>
