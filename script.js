@@ -1523,14 +1523,16 @@
       document.body.appendChild(bait);
 
       setTimeout(() => {
+        const style = window.getComputedStyle(bait);
         const blocked = !document.body.contains(bait) ||
-          getComputedStyle(bait).display === 'none' ||
-          getComputedStyle(bait).visibility === 'hidden' ||
+          style.display === 'none' ||
+          style.visibility === 'hidden' ||
           bait.offsetHeight === 0 ||
           bait.offsetWidth === 0;
+        console.log('Adblock detection:', blocked);
         bait.remove();
         resolve(blocked);
-      }, 1500);
+      }, 2000);
     });
   }
 
@@ -1545,19 +1547,19 @@
   }
 
   refreshBtn.addEventListener('click', () => {
-    // Force reload with unique query param to bypass cache
-    window.location.href = window.location.href.split('#')[0].split('?')[0] + '?reload=' + new Date().getTime();
+    // Force full reload bypassing cache by adding a unique query param
+    const url = new URL(window.location.href);
+    url.searchParams.set('reload', Date.now());
+    window.location.href = url.toString();
   });
 
   window.addEventListener('load', () => {
-    setTimeout(() => {
-      detectAdBlocker().then((blocked) => {
-        if (blocked) {
-          showPopup();
-        } else {
-          hidePopup();
-        }
-      });
-    }, 1500);
+    detectAdBlocker().then((blocked) => {
+      if (blocked) {
+        showPopup();
+      } else {
+        hidePopup();
+      }
+    });
   });
 })();
