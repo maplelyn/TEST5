@@ -1514,6 +1514,7 @@
 (function () {
   const overlay = document.getElementById('adblock-overlay');
   const refreshBtn = document.getElementById('adblock-refresh-btn');
+  const closeBtn = document.getElementById('adblock-close-btn');
 
   function detectAdBlocker() {
     return new Promise((resolve) => {
@@ -1529,7 +1530,6 @@
           style.visibility === 'hidden' ||
           bait.offsetHeight === 0 ||
           bait.offsetWidth === 0;
-        console.log('Adblock detection:', blocked);
         bait.remove();
         resolve(blocked);
       }, 2000);
@@ -1539,6 +1539,7 @@
   function showPopup() {
     overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    closeBtn.focus();
   }
 
   function hidePopup() {
@@ -1547,10 +1548,19 @@
   }
 
   refreshBtn.addEventListener('click', () => {
-    // Force full reload bypassing cache by adding a unique query param
     const url = new URL(window.location.href);
     url.searchParams.set('reload', Date.now());
     window.location.href = url.toString();
+  });
+
+  closeBtn.addEventListener('click', () => {
+    hidePopup();
+  });
+
+  overlay.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      hidePopup();
+    }
   });
 
   window.addEventListener('load', () => {
