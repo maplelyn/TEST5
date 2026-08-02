@@ -1530,7 +1530,7 @@
           bait.offsetWidth === 0;
         bait.remove();
         resolve(blocked);
-      }, 100);
+      }, 1500);
     });
   }
 
@@ -1545,7 +1545,8 @@
   }
 
   refreshBtn.addEventListener('click', () => {
-    window.location.reload(true);
+    // Force reload with unique query param to bypass cache
+    window.location.href = window.location.href.split('#')[0].split('?')[0] + '?reload=' + new Date().getTime();
   });
 
   window.addEventListener('load', () => {
