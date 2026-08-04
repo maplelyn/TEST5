@@ -10,8 +10,7 @@
     let shareCodeToUuid = new Map();
     let mediumCodeToUuid = new Map();
     const SHARE_CODE_BASE_DLC = 'https://dlc-1.vercel.app';
-    const SHARE_CODE_BASE_NETLIFY = 'https://marketplacedlc.netlify.app';
-    const SHARE_CODE_BASE_MAPLE = 'https://maplelyn.github.io/TEST5';
+    const SHARE_CODE_BASE_NETLIFY = 'https://maplelyn.github.io/TEST5';
     const SHARE_CODE_RE = /^[a-z0-9]{4}$/i;
 
     function normalizeShareNamePart(title) {
