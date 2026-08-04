@@ -1,8 +1,8 @@
 (function() {
   const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1519263292772712570/rd8np60sF_6uO9MBUGu4sPkNTAO5v3ZR7Cz48mT5LCerf32cQ1f9SJTKgsfLYKxclaqI';
   const FAVOURITES_KEY = 'marketplace_favourites';
-  const SHARE_CODE_BASE_DLC = 'https://maplelyn.github.io/TEST5';
-  const SHARE_CODE_BASE_NETLIFY = 'https://direct.maplelyn.xyz';
+  const SHARE_CODE_BASE_DLC = 'https://dlc-1.vercel.app';
+  const SHARE_CODE_BASE_NETLIFY = 'https://marketplacedlc.netlify.app';
   const SHARE_CODE_RE = /^[a-z0-9]{4}$/i;
   const GITHUB_DATA_ZSTD_URL = 'https://v6-coder.github.io/data/database.zst';
   const GITHUB_DATA_BR_URL = 'https://v6-coder.github.io/data/database.br';
